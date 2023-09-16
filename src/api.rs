@@ -934,7 +934,7 @@ pub mod synerex_server {
             request: tonic::Request<super::Target>,
         ) -> std::result::Result<tonic::Response<super::Response>, tonic::Status>;
         /// Server streaming response type for the SubscribeDemand method.
-        type SubscribeDemandStream: futures_core::Stream<
+        type SubscribeDemandStream: tonic::codegen::tokio_stream::Stream<
                 Item = std::result::Result<super::Demand, tonic::Status>,
             >
             + Send
@@ -947,7 +947,7 @@ pub mod synerex_server {
             tonic::Status,
         >;
         /// Server streaming response type for the SubscribeSupply method.
-        type SubscribeSupplyStream: futures_core::Stream<
+        type SubscribeSupplyStream: tonic::codegen::tokio_stream::Stream<
                 Item = std::result::Result<super::Supply, tonic::Status>,
             >
             + Send
@@ -968,7 +968,7 @@ pub mod synerex_server {
             request: tonic::Request<super::Mbus>,
         ) -> std::result::Result<tonic::Response<super::Response>, tonic::Status>;
         /// Server streaming response type for the SubscribeMbus method.
-        type SubscribeMbusStream: futures_core::Stream<
+        type SubscribeMbusStream: tonic::codegen::tokio_stream::Stream<
                 Item = std::result::Result<super::MbusMsg, tonic::Status>,
             >
             + Send
@@ -989,7 +989,7 @@ pub mod synerex_server {
             request: tonic::Request<super::Mbus>,
         ) -> std::result::Result<tonic::Response<super::MbusState>, tonic::Status>;
         /// Server streaming response type for the SubscribeGateway method.
-        type SubscribeGatewayStream: futures_core::Stream<
+        type SubscribeGatewayStream: tonic::codegen::tokio_stream::Stream<
                 Item = std::result::Result<super::GatewayMsg, tonic::Status>,
             >
             + Send
@@ -1113,7 +1113,7 @@ pub mod synerex_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).notify_demand(request).await
+                                <T as Synerex>::notify_demand(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1157,7 +1157,7 @@ pub mod synerex_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).notify_supply(request).await
+                                <T as Synerex>::notify_supply(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1201,7 +1201,7 @@ pub mod synerex_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).propose_demand(request).await
+                                <T as Synerex>::propose_demand(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1245,7 +1245,7 @@ pub mod synerex_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).propose_supply(request).await
+                                <T as Synerex>::propose_supply(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1289,7 +1289,7 @@ pub mod synerex_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).select_supply(request).await
+                                <T as Synerex>::select_supply(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1333,7 +1333,8 @@ pub mod synerex_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).select_modified_supply(request).await
+                                <T as Synerex>::select_modified_supply(&inner, request)
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -1377,7 +1378,7 @@ pub mod synerex_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).select_demand(request).await
+                                <T as Synerex>::select_demand(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1420,7 +1421,9 @@ pub mod synerex_server {
                             request: tonic::Request<super::Target>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).confirm(request).await };
+                            let fut = async move {
+                                <T as Synerex>::confirm(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -1466,7 +1469,7 @@ pub mod synerex_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).subscribe_demand(request).await
+                                <T as Synerex>::subscribe_demand(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1513,7 +1516,7 @@ pub mod synerex_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).subscribe_supply(request).await
+                                <T as Synerex>::subscribe_supply(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1556,7 +1559,9 @@ pub mod synerex_server {
                             request: tonic::Request<super::MbusOpt>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).create_mbus(request).await };
+                            let fut = async move {
+                                <T as Synerex>::create_mbus(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -1598,7 +1603,9 @@ pub mod synerex_server {
                             request: tonic::Request<super::Mbus>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).close_mbus(request).await };
+                            let fut = async move {
+                                <T as Synerex>::close_mbus(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -1642,7 +1649,7 @@ pub mod synerex_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).subscribe_mbus(request).await
+                                <T as Synerex>::subscribe_mbus(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1686,7 +1693,7 @@ pub mod synerex_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).send_mbus_msg(request).await
+                                <T as Synerex>::send_mbus_msg(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1730,7 +1737,7 @@ pub mod synerex_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_mbus_state(request).await
+                                <T as Synerex>::get_mbus_state(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1777,7 +1784,7 @@ pub mod synerex_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).subscribe_gateway(request).await
+                                <T as Synerex>::subscribe_gateway(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1821,7 +1828,7 @@ pub mod synerex_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).forward_to_gateway(request).await
+                                <T as Synerex>::forward_to_gateway(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1865,7 +1872,7 @@ pub mod synerex_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).close_demand_channel(request).await
+                                <T as Synerex>::close_demand_channel(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1909,7 +1916,7 @@ pub mod synerex_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).close_supply_channel(request).await
+                                <T as Synerex>::close_supply_channel(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1953,7 +1960,7 @@ pub mod synerex_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).close_all_channels(request).await
+                                <T as Synerex>::close_all_channels(&inner, request).await
                             };
                             Box::pin(fut)
                         }
